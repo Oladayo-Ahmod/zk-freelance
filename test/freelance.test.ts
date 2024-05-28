@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { expect,assert } from 'chai';
 import { Contract, Wallet } from "zksync-ethers";
 import { getWallet, deployContract, LOCAL_RICH_WALLETS } from '../deploy/utils';
 import * as ethers from "ethers";
@@ -87,8 +87,33 @@ describe('Freelance ', ()=>{
         expect(job.hiredFreelancer).to.equal(freelancer.address)
     });
 
-   
+    // release escrow funds to freelancer after job completion
+    it("Should release escrow funds to a freelancer", async function () {
+        const fund = '100'
+        await (dfreelancer.connect(employer) as Contract)
+        .releaseEscrow('1', freelancer.address);
+        const updatedBalance = (await dfreelancer.freelancers(freelancer.address)).balance;
+        assert.equal(updatedBalance.toString(),ethers.parseEther(fund).toString())
+    });
 
+     // withrawal of earnings by freelancer
+  it("Should withdraw earnings and not allow withdrawal on empty balance", async function () {
+    const withdraw = await (dfreelancer.connect(freelancer) as Contract)
+    .withdrawEarnings();
+    await withdraw.wait()
+
+    try {
+        const reWithdraw = await (dfreelancer.connect(freelancer) as Contract)
+        .withdrawEarnings();
+        await reWithdraw.wait()
+
+        expect.fail('Expect withdrawal to fail on empty balance but it did not')
+    } catch (error) {
+        expect(error.message).to.include("NBW"); //NBW : No balance to withdraw.
+    }
+    
+
+  });
 
     
 })
