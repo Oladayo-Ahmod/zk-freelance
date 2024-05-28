@@ -2,50 +2,24 @@
 
 This project was scaffolded with [zksync-cli](https://github.com/matter-labs/zksync-cli).
 
-## Project Layout
+# Botanicity: Revolutionizing Freelancing
 
-- `/contracts`: Contains solidity smart contracts.
-- `/deploy`: Scripts for contract deployment and interaction.
-- `/test`: Test files.
-- `hardhat.config.ts`: Configuration settings.
+## Overview
 
-## How to Use
+This project heralds a new era in freelancing, harnessing the power of the zkSync blockchain to create a decentralized platform. Seamlessly connecting clients with skilled professionals across diverse fields, Botanicity ensures integrity, security, and equitable compensation for all parties involved. Whether you're in need of innovative creativity, technical prowess, or expert consultations, ZK-freelance stands as a beacon of reliability in the decentralized marketplace.
 
-- `npm run compile`: Compiles contracts.
-- `npm run deploy`: Deploys using script `/deploy/deploy.ts`.
-- `npm run interact`: Interacts with the deployed contract using `/deploy/interact.ts`.
-- `npm run test`: Tests the contracts.
+## Key Features
 
-Note: Both `npm run deploy` and `npm run interact` are set in the `package.json`. You can also run your files directly, for example: `npx hardhat deploy-zksync --script deploy.ts`
+- **Decentralized Marketplace**: By operating on the zkSync decentralized network, it eliminates intermediaries, fostering direct interactions between clients and freelancers.
 
-### Environment Settings
+- **Smart Contracts**: Empowering secure and automated payment processing, dispute resolution, and contract execution, smart contracts alleviate the need for blind trust between participants.
 
-To keep private keys safe, this project pulls in environment variables from `.env` files. Primarily, it fetches the wallet's private key.
+- **Transparent Reputation System**: Guided by a transparent reputation system, it empowers clients and freelancers alike to make informed decisions, ensuring mutually beneficial engagements.
 
-Rename `.env.example` to `.env` and fill in your private key:
+- **Escrow Services**: With funds securely held in escrow until both parties acknowledge satisfactory completion, it provides a sanctuary of trust for both clients and freelancers.
 
-```
-WALLET_PRIVATE_KEY=your_private_key_here...
-```
+This project thrives on collaboration and welcomes contributions from developers, designers, and anyone with innovative ideas. Join us on our GitHub repository to shape the future of freelancing.
 
-### Network Support
+## Support
 
-`hardhat.config.ts` comes with a list of networks to deploy and test contracts. Add more by adjusting the `networks` section in the `hardhat.config.ts`. To make a network the default, set the `defaultNetwork` to its name. You can also override the default using the `--network` option, like: `hardhat test --network dockerizedNode`.
-
-### Local Tests
-
-Running `npm run test` by default runs the [zkSync In-memory Node](https://era.zksync.io/docs/tools/testing/era-test-node.html) provided by the [@matterlabs/hardhat-zksync-node](https://era.zksync.io/docs/tools/hardhat/hardhat-zksync-node.html) tool.
-
-Important: zkSync In-memory Node currently supports only the L2 node. If contracts also need L1, use another testing environment like Dockerized Node. Refer to [test documentation](https://era.zksync.io/docs/tools/testing/) for details.
-
-## Useful Links
-
-- [Docs](https://era.zksync.io/docs/dev/)
-- [Official Site](https://zksync.io/)
-- [GitHub](https://github.com/matter-labs)
-- [Twitter](https://twitter.com/zksync)
-- [Discord](https://join.zksync.dev/)
-
-## License
-
-This project is under the [MIT](./LICENSE) license.
+For queries, issues, or feedback, reach out to us at oladayoahmod112@gmail.com . Your input is invaluable in our quest for continuous improvement.
