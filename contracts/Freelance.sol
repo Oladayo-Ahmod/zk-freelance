@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 import "./Employ.sol";
 
-contract Dfreelancer is Employers { 
+contract Freelance is Employ { 
    
 
      /// @notice retrieves freelancer by address

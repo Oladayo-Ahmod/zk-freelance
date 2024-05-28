@@ -3,7 +3,7 @@ import { Contract, Wallet } from "zksync-ethers";
 import { getWallet, deployContract, LOCAL_RICH_WALLETS } from '../deploy/utils';
 import * as ethers from "ethers";
 
-describe('Freelancegit ', ()=>{
+describe('Freelance ', ()=>{
 
     const freelancerName = "Test Freelancer";
     const freelancerSkills = "Solidity, JavaScript";
@@ -25,7 +25,22 @@ describe('Freelancegit ', ()=>{
         freelancer = getWallet(LOCAL_RICH_WALLETS[0].privateKey);
         employer = getWallet(LOCAL_RICH_WALLETS[1].privateKey);
     
-        dfreelancer = await deployContract("Escrow", [], { wallet: intermediary, silent: true });
+        dfreelancer = await deployContract("Freelance", [], { wallet: intermediary, silent: true });
+    });
+
+    it("Should create a job", async function () {
+        await (dfreelancer.connect(employer) as Contract)
+        .registerEmployer('Ahmod','technology','United States','https://img.com')
+        await (dfreelancer.connect(employer) as Contract)
+        .createJob(jobTitle, jobDescription, ethers.parseEther('100'));
+       
+        const job = await dfreelancer.getJobByID('1');
+        expect(job.employer).to.equal(employer.address);
+        expect(job.title).to.equal(jobTitle);
+        expect(job.description).to.equal(jobDescription);
+        expect(job.budget.toString()).to.equal(ethers.parseEther(jobBudget));
+        expect(job.completed).to.be.false;
+  
     });
 
 

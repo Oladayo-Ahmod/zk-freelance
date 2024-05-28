@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract Djob{
+contract Jobs{
      address public owner;
     uint8 public totalJobs;
     uint public totalFreelancers;
