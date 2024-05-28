@@ -38,7 +38,7 @@ describe('Freelance ', ()=>{
         expect(job.employer).to.equal(employer.address);
         expect(job.title).to.equal(jobTitle);
         expect(job.description).to.equal(jobDescription);
-        expect(job.budget.toString()).to.equal(ethers.parseEther(jobBudget));
+        expect(job.budget).to.equal(ethers.parseEther(jobBudget));
         expect(job.completed).to.be.false;
   
     });
