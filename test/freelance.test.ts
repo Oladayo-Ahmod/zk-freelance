@@ -67,17 +67,8 @@ describe('Freelance ', ()=>{
         expect(job.hiredFreelancer).to.equal(freelancer.address)
     });
 
-        // job completion
-    it("Should complete a job", async function () {
-        await (dfreelancer.connect(employer) as Contract)
-        .completeJob('1', freelancer.address);
-        const job = await dfreelancer.getJobByID('1');
-        expect(job.completed).to.be.true;
-        expect(job.hiredFreelancer).to.equal(freelancer.address)
-    });
-
-    // funds deposit by employer
-    it("Should deposit funds to a job", async function () {
+     // funds deposit by employer
+     it("Should deposit funds to a job", async function () {
         const fund = '100' 
         await (dfreelancer.connect(employer) as Contract)
         .depositFunds('1', { value: ethers.parseEther(fund)});
@@ -87,6 +78,17 @@ describe('Freelance ', ()=>{
         expect(escrowFund).to.equal(ethers.parseEther(fund))
     });
 
-    
+    // job completion
+    it("Should complete a job", async function () {
+        await (dfreelancer.connect(employer) as Contract)
+        .completeJob('1', freelancer.address);
+        const job = await dfreelancer.getJobByID('1');
+        expect(job.completed).to.be.true;
+        expect(job.hiredFreelancer).to.equal(freelancer.address)
+    });
+
+   
+
+
     
 })
