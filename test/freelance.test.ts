@@ -111,7 +111,6 @@ describe('Freelance ', ()=>{
     } catch (error) {
         expect(error.message).to.include("NBW"); //NBW : No balance to withdraw.
     }
-    
 
   });
 
