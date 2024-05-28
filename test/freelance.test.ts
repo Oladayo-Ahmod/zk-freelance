@@ -28,6 +28,21 @@ describe('Freelance ', ()=>{
         dfreelancer = await deployContract("Freelance", [], { wallet: intermediary, silent: true });
     });
 
+     //  registering freelancer
+    it("Should register a freelancer", async function () {
+        await (dfreelancer.connect(freelancer) as Contract)
+        .registerFreelancer(freelancerName, freelancerSkills,freelancerCountry,
+        freelancerGigTitle,freelancerGigDesc, images,starting_price);
+       
+        const registeredFreelancer = await dfreelancer.freelancers(freelancer.address);
+        expect(registeredFreelancer.freelancerAddress).to.equal(freelancer.address);
+        expect(registeredFreelancer.name).to.equal(freelancerName);
+        expect(registeredFreelancer.skills).to.equal(freelancerSkills);
+        expect(registeredFreelancer.balance.toString()).to.equal('0');
+    });
+
+    // creating job
+
     it("Should create a job", async function () {
         await (dfreelancer.connect(employer) as Contract)
         .registerEmployer('Ahmod','technology','United States','https://img.com')
@@ -43,7 +58,35 @@ describe('Freelance ', ()=>{
   
     });
 
+        // hiring freelancer
+    it("Should hire a freelancer", async function () {
+        await (dfreelancer.connect(freelancer)as Contract).applyForJob('1');
+        await (dfreelancer.connect(employer) as Contract)
+        .hireFreelancer('1', freelancer.address);
+        const job = await dfreelancer.getJobByID('1');
+        expect(job.hiredFreelancer).to.equal(freelancer.address)
+    });
 
+        // job completion
+    it("Should complete a job", async function () {
+        await (dfreelancer.connect(employer) as Contract)
+        .completeJob('1', freelancer.address);
+        const job = await dfreelancer.getJobByID('1');
+        expect(job.completed).to.be.true;
+        expect(job.hiredFreelancer).to.equal(freelancer.address)
+    });
 
+    // funds deposit by employer
+    it("Should deposit funds to a job", async function () {
+        const fund = '100' 
+        await (dfreelancer.connect(employer) as Contract)
+        .depositFunds('1', { value: ethers.parseEther(fund)});
+        const escrowFund = await dfreelancer.getEmployerEscrow(employer.address,'1')
+        const _employer = await dfreelancer.getEmployerByAddress(employer.address);
+        expect(_employer.balance).to.equal(ethers.parseEther(fund))
+        expect(escrowFund).to.equal(ethers.parseEther(fund))
+    });
+
+    
     
 })
