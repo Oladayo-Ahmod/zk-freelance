@@ -1,12 +1,10 @@
-# zkSync Hardhat project template
 
-This project was scaffolded with [zksync-cli](https://github.com/matter-labs/zksync-cli).
 
-# Botanicity: Revolutionizing Freelancing
+# ZK-freelance: Revolutionizing Freelancing
 
 ## Overview
 
-This project heralds a new era in freelancing, harnessing the power of the zkSync blockchain to create a decentralized platform. Seamlessly connecting clients with skilled professionals across diverse fields, Botanicity ensures integrity, security, and equitable compensation for all parties involved. Whether you're in need of innovative creativity, technical prowess, or expert consultations, ZK-freelance stands as a beacon of reliability in the decentralized marketplace.
+This project heralds a new era in freelancing, harnessing the power of the zkSync blockchain to create a decentralized platform. Seamlessly connecting clients with skilled professionals across diverse fields, ZK-freelance ensures integrity, security, and equitable compensation for all parties involved. Whether you're in need of innovative creativity, technical prowess, or expert consultations, ZK-freelance stands as a beacon of reliability in the decentralized marketplace.
 
 ## Key Features
 
