@@ -478,7 +478,7 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
             Swal.fire({
                 position: 'top-end',
                 icon: 'success',
-                text: `You have successfully deposited ${amount} BTC for this job`,
+                text: `You have successfully deposited ${amount} ETH for this job`,
                 showConfirmButton: true,
                 timer: 4000
             })
