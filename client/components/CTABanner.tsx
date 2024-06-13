@@ -25,7 +25,7 @@ function CTABanner(){
                                 <span className="list-icon flex-shrink-0 flaticon-badge"></span>
                                 <div className="list-content flex-grow-1 ml20">
                                     <h4 className="mb-1">Get quality work done quickly</h4>
-                                    <p className="text mb-0 fz15">Verify a pro's portfolio, client approval, and identity <br className="d-none d-lg-block" /> verification.</p>
+                                    <p className="text mb-0 fz15">Verify a pro&apos;s portfolio, client approval, and identity <br className="d-none d-lg-block" /> verification.</p>
                                 </div>
                             </div>
                             <div className="list-one d-flex align-items-start mb30" data-aos="fade-up">
@@ -39,7 +39,7 @@ function CTABanner(){
                                 <span className="list-icon flex-shrink-0 flaticon-security"></span>
                                 <div className="list-content flex-grow-1 ml20">
                                     <h4 className="mb-1">Protected and well-secured</h4>
-                                    <p className="text mb-0 fz15">Focus on your work knowing we help protect your data and privacy. We’re here with 24/7 customer support if you need it.</p>
+                                    <p className="text mb-0 fz15">Focus on your work knowing we help protect your data and privacy. We&apos;re here with 24/7 customer support if you need it.</p>
                                 </div>
                             </div>
                         </div>
@@ -48,10 +48,10 @@ function CTABanner(){
             </div>
             <img className="cta-banner3-img wow fadeInLeft animated rounded" 
              width={50} height={100} 
-            src="/images/home/home-1.jpg" alt="" />
+            src="/images/home-1.jpg" alt="" />
         </div>
     </section>   
     )
 }
 
-export default CTABanner
+export default CTABanner;

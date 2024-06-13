@@ -61,7 +61,7 @@ function AllJobs(){
 
                                     <p>{job.description}</p>
                                     <h4 className="mb-3 text-thm">{job.title}</h4>
-                                    <p className="list-inline-item mb-0">{job.budget.toString()} BTC</p>
+                                    <p className="list-inline-item mb-0">{job.budget.toString()} ETH</p>
                                     <p className="list-inline-item mb-0 bdrl1 pl15">{job.completed ? 'Expired' : ''}</p>
                                     <p className="list-inline-item mb-0 bdrl1 pl15">Remote</p>
                                     <Link href={'/single-job/'+job.id}>View Job</Link>

@@ -16,7 +16,7 @@ function HomeBanner(){
                 <div className="col-lg-12">
                     <div className="main-banner-wrapper home1_style">
                         <div className="banner-style-one dots_none nav_none owl-theme owl-carousel">
-                            <div className="slide slide-one" style={{'backgroundImage' :' url(images/home/home-1.jpg)'}}></div>
+                            <div className="slide slide-one" style={{'backgroundImage' :' url(images/home-1.jpg)'}}></div>
                             {/* <div className="slide slide-one" style={{'backgroundImage' :' url(images/home/home-1.jpg)'}}></div> */}
                         </div>
                         <div className="carousel-btn-block banner-carousel-btn">

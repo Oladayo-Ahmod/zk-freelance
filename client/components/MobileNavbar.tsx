@@ -54,7 +54,7 @@ function MobileNavbar(){
                 <div className="menu_and_widgets">
                     <div className="mobile_menu_bar d-flex justify-content-between align-items-center">
                         <a className="mobile_logo" href="#">
-                            <Image src="/images/default.png" style={{'objectFit':'contain'}} width={120} height={40}  alt="" />
+                            <Image src="/images/ZF.png" style={{'objectFit':'contain'}} width={120} height={40}  alt="" />
                        </a>
                         <div className="right-side text-end">
                             {/* <a className="text-white" href="page-login.html">join</a> */}
