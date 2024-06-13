@@ -7,7 +7,6 @@ import Navbar from "../../components/Navbar"
 function ListingPage(){
     return (
         <main className="wrapper ovh">
-              {/* <div className="preloader"></div> */}
             <Navbar />
             <MobileNavbar />
             <div className="body_content">
