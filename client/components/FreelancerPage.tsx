@@ -1,7 +1,7 @@
 "use client"
 
 import { useContext, useEffect, useRef, useState } from 'react'
-import { FREELANCER_CONTEXT} from '../context/MarketPlace'
+import { FREELANCER_CONTEXT} from '../context/Marketplace'
 import FreelancerProps from "@/app/interfaces/freelancerProps"
 import Link from 'next/link'
 import Image from 'next/image'
