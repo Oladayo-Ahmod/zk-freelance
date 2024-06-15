@@ -113,7 +113,7 @@ function FreelancerPage({address} : any){
                         <div className="col-lg-4">
                             <div className="blog-sidebar ms-lg-auto">
                                 <div className="price-widget pt25 widget-mt-minus bdrs8">
-                                    <h3 className="widget-title">{applicantDetails.starting_price.toString()} <small className="fz15 fw500">BTC</small></h3>
+                                    <h3 className="widget-title">{applicantDetails.starting_price.toString()} <small className="fz15 fw500">ETH</small></h3>
                                     <div className="category-list mt20">
                                         <a className="d-flex align-items-center justify-content-between bdrb1 pb-2" href="#">
                       <span className="text"><i className="flaticon-place text-thm2 pe-2 vam"></i>Location</span> <span
