@@ -2,7 +2,7 @@ import { deployContract, getWallet, getProvider } from "./utils";
 import * as ethers from "ethers";
 
 export default async function () {
-  const ZKFreelance = await deployContract("Freelance");
+  const ZKFreelance = await deployContract("Freelance",[]);
   const ZKFreelanceAddress = await ZKFreelance.getAddress();
   const paymaster = await deployContract("ZKFreelancePaymaster", [ZKFreelanceAddress]);
 
@@ -14,7 +14,7 @@ export default async function () {
   await (
     await wallet.sendTransaction({
       to: paymasterAddress,
-      value: ethers.parseEther("0.05"),
+      value: ethers.parseEther("0.06"),
     })
   ).wait();
 
