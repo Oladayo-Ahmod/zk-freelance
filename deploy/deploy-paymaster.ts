@@ -14,7 +14,7 @@ export default async function () {
   await (
     await wallet.sendTransaction({
       to: paymasterAddress,
-      value: ethers.parseEther("0.06"),
+      value: ethers.parseEther("0.05"),
     })
   ).wait();
 
