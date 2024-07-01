@@ -7,6 +7,8 @@ import Router from 'next/router';
 import Swal from 'sweetalert2';
 import FreelancerProps from '../app/interfaces/freelancerProps';
 import {uploadJSONToIPFS,uploadFileToIPFS} from '../constants/pinata'
+import { Contract, BrowserProvider, Provider } from "zksync-ethers";
+
 
 export const FREELANCER_CONTEXT = createContext<FreelancerProps | undefined>(
     undefined
@@ -15,6 +17,7 @@ export const FREELANCER_CONTEXT = createContext<FreelancerProps | undefined>(
 let connect : any
 if(typeof window !=='undefined'){
     connect = (window as any).ethereum
+    
 }
 
 export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({children,})=>{
@@ -82,14 +85,14 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
         
         if(account){
             if(name && country && skills && profileImage && gigImage &&gitDesc && gitTitle && starting_price){
-                const price = ethers.utils.parseEther(starting_price.toString())
+                const price = ethers.parseEther(starting_price.toString())
                 const images = [profileImage.toString() ,gigImage.toString()]                
                 try {
 
                setBtnState("Registering...")
-               const provider = new ethers.providers.Web3Provider(connect)
-               const signer = provider.getSigner()
-               const contract = new ethers.Contract(ADDRESS,ABI,signer)
+            
+               const signer = await new BrowserProvider(connect).getSigner();
+               const contract = new Contract(ADDRESS,ABI,signer);
                const register = await contract.registerFreelancer(name,skills,country,gitTitle,gitDesc,images,price)
                setBtnState("Waiting...")
                await register.wait()
@@ -159,11 +162,10 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     const freelancerDetails : FreelancerProps["freelancerDetails"] =async(account)=>{
         try {
             // console.log(account)
-            const provider = new ethers.providers.Web3Provider(connect)
-            const signer = provider.getSigner()
-            const contract = new ethers.Contract(ADDRESS,ABI,signer)
+            const signer = await new BrowserProvider(connect).getSigner();
+            const contract = new Contract(ADDRESS,ABI,signer);
             const details = await contract.freelancers(account)
-            const balance = ethers.utils.formatEther(details.balance.toString())
+            const balance = ethers.formatEther(details.balance.toString())
             const date  = new Date(details.registration_date.toString() * 1000)
             const year = date.getFullYear()
             const month = date.toLocaleString('default', {month : 'long'})
@@ -179,7 +181,7 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
                 jobsCompleted : details.jobsCompleted,
                 registered : details.registered,
                 registration_date : month + ',' + year,
-                starting_price : ethers.utils.formatEther(details.starting_price.toString())
+                starting_price : ethers.formatEther(details.starting_price.toString())
 
             }
             setCurrentFreelancerDetails(freelancer)
@@ -210,7 +212,7 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
                     jobsCompleted : details[0].jobsCompleted,
                     registered : details[0].registered,
                     registration_date : month + ',' + year,
-                    starting_price : ethers.utils.formatEther(details[0].starting_price.toString())
+                    starting_price : ethers.formatEther(details[0].starting_price.toString())
                 }
                 setApplicantDetails(freelancer)
             }
@@ -223,11 +225,10 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     // get employer details by address
     const employerDetails : FreelancerProps["employerDetails"] =async(account)=>{
         try {
-            const provider = new ethers.providers.Web3Provider(connect)
-            const signer = provider.getSigner()
-            const contract = new ethers.Contract(ADDRESS,ABI,signer)
+            const signer = await new BrowserProvider(connect).getSigner();
+            const contract = new Contract(ADDRESS,ABI,signer);
             const details = await contract.employers(account)
-            const balance = ethers.utils.formatEther(details.balance.toString())
+            const balance = ethers.formatEther(details.balance.toString())
             setEmployerBal(balance.toString())
             setCurrentEmployerDetails(details)
         } catch (error) {
@@ -243,9 +244,8 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
             const image = profileImage.toString()
              try {
              setBtnState("Registering...")
-             const provider = new ethers.providers.Web3Provider(connect)
-             const signer = provider.getSigner()
-             const contract = new ethers.Contract(ADDRESS,ABI,signer)
+             const signer = await new BrowserProvider(connect).getSigner();
+             const contract = new Contract(ADDRESS,ABI,signer);
              const register = await contract.registerEmployer(name,industry,country,image)
              setBtnState("Waiting...")
              await register.wait()
@@ -295,10 +295,9 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
         if (title && description && budget) {
             try {
                 setBtnState("Creating job...")
-                const parsedBudget = ethers.utils.parseEther(budget.toString())
-                const provider = new ethers.providers.Web3Provider(connect)
-                const signer = provider.getSigner()
-                const contract = new ethers.Contract(ADDRESS,ABI,signer)
+                const parsedBudget = ethers.parseEther(budget.toString())
+                const signer = await new BrowserProvider(connect).getSigner();
+                const contract = new Contract(ADDRESS,ABI,signer);
                 const tx  = await contract.createJob(title,description,parsedBudget)
                 setBtnState("Waiting...")
                 await tx.wait()
@@ -352,9 +351,8 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
      const applyJob : FreelancerProps["applyJob"]=async (jobId)=>{
         try {
           
-            const provider = new ethers.providers.Web3Provider(connect)
-            const signer = provider.getSigner()
-            const contract = new ethers.Contract(ADDRESS,ABI,signer)
+            const signer = await new BrowserProvider(connect).getSigner();
+               const contract = new Contract(ADDRESS,ABI,signer);
             const tx = await contract.applyForJob(jobId)
             await tx.wait()
 
@@ -403,15 +401,10 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     //  hire freelancer by employer
      const hireFreelancer : FreelancerProps["hireFreelancer"]= async(jobId,address)=>{
         try {
-            // setBtnState("hiring...")
             const location = '../constants/nickname.json'
-            const provider = new ethers.providers.Web3Provider(connect)
-            const signer = provider.getSigner()
-            const contract = new ethers.Contract(ADDRESS,ABI,signer)
+            const signer = await new BrowserProvider(connect).getSigner();
+            const contract = new Contract(ADDRESS,ABI,signer);
             await contract.hireFreelancer(jobId,address)
-            // setBtnState("waiting...")
-            // await tx.wait()
-            // setBtnState("hired!")
 
             setSellerId(account)
             setBuyerId(address)            
@@ -466,10 +459,9 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
      const depositFunds : FreelancerProps["depositFunds"] = async(jobId,amount)=>{
         try {
             setBtnState("Depositing funds...")
-            const provider = new ethers.providers.Web3Provider(connect)
-            const signer = provider.getSigner()
-            const contract = new ethers.Contract(ADDRESS,ABI,signer)
-            const parsedAmount = ethers.utils.parseEther(amount)
+            const signer = await new BrowserProvider(connect).getSigner();
+            const contract = new Contract(ADDRESS,ABI,signer);
+            const parsedAmount = ethers.parseEther(amount)
             const tx = await contract.depositFunds(jobId, {value : parsedAmount})
             setBtnState("Waiting...")
             await tx.wait()
@@ -533,9 +525,8 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
       const releaseEscrow : FreelancerProps["releaseEscrow"] = async(jobId,address)=>{
         try {
             setEscrowBtnState("Releasing escrow...")
-            const provider = new ethers.providers.Web3Provider(connect)
-            const signer = provider.getSigner()
-            const contract = new ethers.Contract(ADDRESS,ABI,signer)
+            const signer = await new BrowserProvider(connect).getSigner();
+            const contract = new Contract(ADDRESS,ABI,signer);
             const tx = await contract.releaseEscrow(jobId,address)
             setEscrowBtnState("Waiting...")
             await tx.wait()
@@ -601,9 +592,8 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
             if(result.isConfirmed){
                 try {
                     setCompleteBtnState("Completing job...")
-                    const provider = new ethers.providers.Web3Provider(connect)
-                    const signer = provider.getSigner()
-                    const contract = new ethers.Contract(ADDRESS,ABI,signer)
+                    const signer = await new BrowserProvider(connect).getSigner();
+                    const contract = new Contract(ADDRESS,ABI,signer);
                     const tx = await contract.completeJob(jobId,address)
                     setCompleteBtnState("Waiting...")
                     await tx.wait()
@@ -672,10 +662,9 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     const withdrawEarnings : FreelancerProps["withdrawEarnings"] = async()=>{
         try {
             setBtnState("Withdrawing...")
-            const provider = new ethers.providers.Web3Provider(connect)
-            const signer = provider.getSigner()
-            const contract = new ethers.Contract(ADDRESS,ABI,signer)
-            const availableBalance = await contract.freelancers(account).balance;
+            const signer = await new BrowserProvider(connect).getSigner();
+            const contract = new Contract(ADDRESS,ABI,signer);
+            // const availableBalance = await contract.freelancers(account).balance;
             const tx = await contract.withdrawEarnings()
             setBtnState("Waiting...")
             await tx.wait()
@@ -721,13 +710,11 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     // get employer escrow
     const retrieveEscrow : FreelancerProps["retrieveEscrow"] = async(jobId)=>{
         try {
-            const provider = new ethers.providers.Web3Provider(connect)
-            const signer = provider.getSigner()
-            const contract = new ethers.Contract(ADDRESS,ABI,signer)
+            const signer = await new BrowserProvider(connect).getSigner();
+            const contract = new Contract(ADDRESS,ABI,signer);
             const tx = await contract.getEmployerEscrow(account,jobId.toString())
-            const escrow =  ethers.utils.formatUnits(tx.toString(), 'ether')
+            const escrow =  ethers.formatUnits(tx.toString(), 'ether')
             setJobEscrow(escrow)
-            // setSingeJob(job)
         } catch (error) {
             console.log(error);
             
@@ -737,16 +724,15 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     // get single job by id
     const retrieveJob : FreelancerProps["retrieveJob"] = async(jobId)=>{
         try {
-            const provider = new ethers.providers.Web3Provider(connect)
-            const signer = provider.getSigner()
-            const contract = new ethers.Contract(ADDRESS,ABI,signer)
+            const signer = await new BrowserProvider(connect).getSigner();
+            const contract = new Contract(ADDRESS,ABI,signer);
             const job = await contract.getJobByID(jobId.toString())
             let item = {
                 id :  job.id,
                 employer : job.employer,
                 description : job.description,
                 title : job.title,
-                budget : ethers.utils.formatEther(job.budget.toString()),
+                budget : ethers.formatEther(job.budget.toString()),
                 completed : job.completed,
                 applicants : job.applicants,
                 hiredFreelancer : job.hiredFreelancer
@@ -761,9 +747,8 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     // get all jobs
     const retrieveAllJobs : FreelancerProps["retrieveAllJobs"] = async()=>{
         try {
-            const provider = new ethers.providers.Web3Provider(connect)
-            const signer = provider.getSigner()
-            const contract = new ethers.Contract(ADDRESS,ABI,signer)
+            const signer = await new BrowserProvider(connect).getSigner();
+            const contract = new Contract(ADDRESS,ABI,signer);
             const jobs = await contract.allJobs()
             const data = await Promise.all(jobs.map((job :any)=>{
                 let item = {
@@ -771,7 +756,7 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
                     employer : job.employer,
                     description : job.description,
                     title : job.title,
-                    budget : ethers.utils.formatEther(job.budget.toString()),
+                    budget : ethers.formatEther(job.budget.toString()),
                     completed : job.completed,
                     applicants : job.applicants,
                     hiredFreelancer : job.hiredFreelancer
@@ -902,9 +887,8 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     // get all registered freelancers
     const allFreelancers : FreelancerProps["allFreelancers"] = async ()=>{
         try {
-            const provider = new ethers.providers.Web3Provider(connect)
-            const signer = provider.getSigner()
-            const contract = new ethers.Contract(ADDRESS,ABI,signer)
+            const signer = await new BrowserProvider(connect).getSigner();
+            const contract = new Contract(ADDRESS,ABI,signer);
             const freelancers = await contract.getAllFreelancers()
            setFreelancers(freelancers)
         } catch (error) {
