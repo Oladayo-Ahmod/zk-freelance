@@ -3,7 +3,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@matterlabs/hardhat-zksync";
 
 const config: HardhatUserConfig = {
-  defaultNetwork: "zkSyncSepoliaTestnet",
+  defaultNetwork: "kura",
   networks: {
     zkSyncSepoliaTestnet: {
       url: "https://sepolia.era.zksync.dev",
@@ -35,6 +35,13 @@ const config: HardhatUserConfig = {
     },
     hardhat: {
       zksync: true,
+    },
+    kura: {
+      url: "https://rpc-kura.cross.technology/",
+      ethNetwork: "kura",
+      zksync: true,
+
+      // accounts: [`${KURA_PRIVATE_KEY}`],
     },
   },
   zksolc: {
