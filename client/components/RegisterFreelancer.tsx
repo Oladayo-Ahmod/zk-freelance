@@ -19,6 +19,7 @@ function RegisterFreelancer(){
             freelancerDetails(account) // retrieve freelancer details
         }
         
+        // console.log(currentFreelancerDetails)
     })
     return (
         <section className="our-register" style={{'backgroundColor' : '#EAFBEF'}}>
@@ -171,6 +172,15 @@ function RegisterFreelancer(){
                               onClick={()=>registerFreelancer()} type="button">{btnState? btnState : 'Create Account'} <i
               className="fal fa-arrow-right-long"></i></button>
                         </div>
+
+                        <div className="d-grid mb20">
+                        <a href={'/freelancer/'+currentFreelancerDetails?.freelancerAddress} style={{'display' : !currentFreelancerDetails?.registered ? 'none' : 'block'}}
+                             className="ud-btn btn-thm default-box-shadow2" 
+                             >View Profile<i
+              className="fal fa-arrow-right-long"></i>
+                        </a>
+                        </div>
+
                     </div>
                 </div>
             </div>

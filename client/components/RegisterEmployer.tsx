@@ -114,6 +114,7 @@ function RegisterEmployer(){
                               onClick={()=>registerEmployer()} type="button">{btnState? btnState : 'Create Account'}<i
               className="fal fa-arrow-right-long"></i></button>
                         </div>
+                        
                     </div>
                 </div>
             </div>
