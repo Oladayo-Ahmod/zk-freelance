@@ -135,7 +135,7 @@ function PopularService(){
                                             {/* <span className="fz14">{freelancer.name}</span> */}
                                             </Link>
                                             <div className="budget">    
-                                                <p className="mb-0 body-color">Starting at<span className="fz17 fw500 dark-color ms-1">{ethers.utils.formatEther(freelancer.starting_price.toString())}</span><small>ETH</small></p>
+                                                <p className="mb-0 body-color">Starting at<span className="fz17 fw500 dark-color ms-1">{ethers.formatEther(freelancer.starting_price.toString())}</span><small>ETH</small></p>
                                             </div>
                                         </div>
                                     </div>
