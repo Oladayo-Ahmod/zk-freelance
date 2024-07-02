@@ -7,7 +7,7 @@ import Router from 'next/router';
 import Swal from 'sweetalert2';
 import FreelancerProps from '../app/interfaces/freelancerProps';
 import {uploadJSONToIPFS,uploadFileToIPFS} from '../constants/pinata'
-import { Contract, BrowserProvider, Provider } from "zksync-ethers";
+import { Contract, BrowserProvider, Provider, Wallet } from "zksync-ethers";
 
 
 export const FREELANCER_CONTEXT = createContext<FreelancerProps | undefined>(
@@ -17,6 +17,7 @@ export const FREELANCER_CONTEXT = createContext<FreelancerProps | undefined>(
 let connect : any
 if(typeof window !=='undefined'){
     connect = (window as any).ethereum
+    
     
 }
 
@@ -71,7 +72,7 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
         try {
             if(connect){
                 const connector = await connect.request({method : 'eth_requestAccounts'})
-                setAccount(connector[0])
+                setAccount(connector[0]) 
                 // Router.push('/')
             }
         } catch (error) {
@@ -90,9 +91,12 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
                 try {
 
                setBtnState("Registering...")
-            
-               const signer = await new BrowserProvider(connect).getSigner();
-               const contract = new Contract(ADDRESS,ABI,signer);
+
+               const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
+               const provider =  await new BrowserProvider(connect).provider 
+               const wallet = new Wallet(PRIVATE_KEY, provider);
+
+               const contract = new Contract(ADDRESS,ABI,wallet);
                const register = await contract.registerFreelancer(name,skills,country,gitTitle,gitDesc,images,price)
                setBtnState("Waiting...")
                await register.wait()
@@ -161,9 +165,11 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     // get freelancer details by address
     const freelancerDetails : FreelancerProps["freelancerDetails"] =async(account)=>{
         try {
-            // console.log(account)
-            const signer = await new BrowserProvider(connect).getSigner();
-            const contract = new Contract(ADDRESS,ABI,signer);
+            const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
+            const provider =  await new BrowserProvider(connect).provider 
+            const wallet = new Wallet(PRIVATE_KEY, provider);
+            
+            const contract = new Contract(ADDRESS,ABI,wallet);
             const details = await contract.freelancers(account)
             const balance = ethers.formatEther(details.balance.toString())
             const date  = new Date(details.registration_date.toString() * 1000)
@@ -225,8 +231,12 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     // get employer details by address
     const employerDetails : FreelancerProps["employerDetails"] =async(account)=>{
         try {
-            const signer = await new BrowserProvider(connect).getSigner();
-            const contract = new Contract(ADDRESS,ABI,signer);
+            
+            const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
+            const provider =  await new BrowserProvider(connect).provider 
+            const wallet = new Wallet(PRIVATE_KEY, provider);
+            
+            const contract = new Contract(ADDRESS,ABI,wallet);
             const details = await contract.employers(account)
             const balance = ethers.formatEther(details.balance.toString())
             setEmployerBal(balance.toString())
@@ -244,8 +254,11 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
             const image = profileImage.toString()
              try {
              setBtnState("Registering...")
-             const signer = await new BrowserProvider(connect).getSigner();
-             const contract = new Contract(ADDRESS,ABI,signer);
+             const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
+             const provider =  await new BrowserProvider(connect).provider 
+             const wallet = new Wallet(PRIVATE_KEY, provider);
+             
+             const contract = new Contract(ADDRESS,ABI,wallet);
              const register = await contract.registerEmployer(name,industry,country,image)
              setBtnState("Waiting...")
              await register.wait()
@@ -296,8 +309,11 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
             try {
                 setBtnState("Creating job...")
                 const parsedBudget = ethers.parseEther(budget.toString())
-                const signer = await new BrowserProvider(connect).getSigner();
-                const contract = new Contract(ADDRESS,ABI,signer);
+                const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
+                const provider =  await new BrowserProvider(connect).provider 
+                const wallet = new Wallet(PRIVATE_KEY, provider);
+                
+                const contract = new Contract(ADDRESS,ABI,wallet);
                 const tx  = await contract.createJob(title,description,parsedBudget)
                 setBtnState("Waiting...")
                 await tx.wait()
@@ -351,8 +367,11 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
      const applyJob : FreelancerProps["applyJob"]=async (jobId)=>{
         try {
           
-            const signer = await new BrowserProvider(connect).getSigner();
-               const contract = new Contract(ADDRESS,ABI,signer);
+            const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
+            const provider =  await new BrowserProvider(connect).provider 
+            const wallet = new Wallet(PRIVATE_KEY, provider);
+            
+            const contract = new Contract(ADDRESS,ABI,wallet);
             const tx = await contract.applyForJob(jobId)
             await tx.wait()
 
@@ -401,9 +420,11 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     //  hire freelancer by employer
      const hireFreelancer : FreelancerProps["hireFreelancer"]= async(jobId,address)=>{
         try {
-            const location = '../constants/nickname.json'
-            const signer = await new BrowserProvider(connect).getSigner();
-            const contract = new Contract(ADDRESS,ABI,signer);
+            const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
+            const provider =  await new BrowserProvider(connect).provider 
+            const wallet = new Wallet(PRIVATE_KEY, provider);
+            
+            const contract = new Contract(ADDRESS,ABI,wallet);
             await contract.hireFreelancer(jobId,address)
 
             setSellerId(account)
@@ -459,8 +480,11 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
      const depositFunds : FreelancerProps["depositFunds"] = async(jobId,amount)=>{
         try {
             setBtnState("Depositing funds...")
-            const signer = await new BrowserProvider(connect).getSigner();
-            const contract = new Contract(ADDRESS,ABI,signer);
+            const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
+            const provider =  await new BrowserProvider(connect).provider 
+            const wallet = new Wallet(PRIVATE_KEY, provider);
+            
+            const contract = new Contract(ADDRESS,ABI,wallet);
             const parsedAmount = ethers.parseEther(amount)
             const tx = await contract.depositFunds(jobId, {value : parsedAmount})
             setBtnState("Waiting...")
@@ -525,8 +549,11 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
       const releaseEscrow : FreelancerProps["releaseEscrow"] = async(jobId,address)=>{
         try {
             setEscrowBtnState("Releasing escrow...")
-            const signer = await new BrowserProvider(connect).getSigner();
-            const contract = new Contract(ADDRESS,ABI,signer);
+            const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
+            const provider =  await new BrowserProvider(connect).provider 
+            const wallet = new Wallet(PRIVATE_KEY, provider);
+            
+            const contract = new Contract(ADDRESS,ABI,wallet);
             const tx = await contract.releaseEscrow(jobId,address)
             setEscrowBtnState("Waiting...")
             await tx.wait()
@@ -592,8 +619,11 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
             if(result.isConfirmed){
                 try {
                     setCompleteBtnState("Completing job...")
-                    const signer = await new BrowserProvider(connect).getSigner();
-                    const contract = new Contract(ADDRESS,ABI,signer);
+                    const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
+                    const provider =  await new BrowserProvider(connect).provider 
+                    const wallet = new Wallet(PRIVATE_KEY, provider);
+                    
+                    const contract = new Contract(ADDRESS,ABI,wallet);
                     const tx = await contract.completeJob(jobId,address)
                     setCompleteBtnState("Waiting...")
                     await tx.wait()
@@ -662,9 +692,11 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     const withdrawEarnings : FreelancerProps["withdrawEarnings"] = async()=>{
         try {
             setBtnState("Withdrawing...")
-            const signer = await new BrowserProvider(connect).getSigner();
-            const contract = new Contract(ADDRESS,ABI,signer);
-            // const availableBalance = await contract.freelancers(account).balance;
+            const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
+            const provider =  await new BrowserProvider(connect).provider 
+            const wallet = new Wallet(PRIVATE_KEY, provider);
+            
+            const contract = new Contract(ADDRESS,ABI,wallet);
             const tx = await contract.withdrawEarnings()
             setBtnState("Waiting...")
             await tx.wait()
@@ -710,8 +742,11 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     // get employer escrow
     const retrieveEscrow : FreelancerProps["retrieveEscrow"] = async(jobId)=>{
         try {
-            const signer = await new BrowserProvider(connect).getSigner();
-            const contract = new Contract(ADDRESS,ABI,signer);
+            const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
+            const provider =  await new BrowserProvider(connect).provider 
+            const wallet = new Wallet(PRIVATE_KEY, provider);
+            
+            const contract = new Contract(ADDRESS,ABI,wallet);
             const tx = await contract.getEmployerEscrow(account,jobId.toString())
             const escrow =  ethers.formatUnits(tx.toString(), 'ether')
             setJobEscrow(escrow)
@@ -724,8 +759,11 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     // get single job by id
     const retrieveJob : FreelancerProps["retrieveJob"] = async(jobId)=>{
         try {
-            const signer = await new BrowserProvider(connect).getSigner();
-            const contract = new Contract(ADDRESS,ABI,signer);
+            const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
+            const provider =  await new BrowserProvider(connect).provider 
+            const wallet = new Wallet(PRIVATE_KEY, provider);
+            
+            const contract = new Contract(ADDRESS,ABI,wallet);
             const job = await contract.getJobByID(jobId.toString())
             let item = {
                 id :  job.id,
@@ -747,8 +785,11 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     // get all jobs
     const retrieveAllJobs : FreelancerProps["retrieveAllJobs"] = async()=>{
         try {
-            const signer = await new BrowserProvider(connect).getSigner();
-            const contract = new Contract(ADDRESS,ABI,signer);
+            const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
+            const provider =  await new BrowserProvider(connect).provider 
+            const wallet = new Wallet(PRIVATE_KEY, provider);
+            
+            const contract = new Contract(ADDRESS,ABI,wallet);
             const jobs = await contract.allJobs()
             const data = await Promise.all(jobs.map((job :any)=>{
                 let item = {
@@ -887,8 +928,11 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     // get all registered freelancers
     const allFreelancers : FreelancerProps["allFreelancers"] = async ()=>{
         try {
-            const signer = await new BrowserProvider(connect).getSigner();
-            const contract = new Contract(ADDRESS,ABI,signer);
+            const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
+            const provider =  await new BrowserProvider(connect).provider 
+            const wallet = new Wallet(PRIVATE_KEY, provider);
+            
+            const contract = new Contract(ADDRESS,ABI,wallet);
             const freelancers = await contract.getAllFreelancers()
            setFreelancers(freelancers)
         } catch (error) {
