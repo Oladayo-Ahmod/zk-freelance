@@ -73,7 +73,6 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
             if(connect){
                 const connector = await connect.request({method : 'eth_requestAccounts'})
                 setAccount(connector[0]) 
-                // Router.push('/')
             }
         } catch (error) {
             console.log(error);
