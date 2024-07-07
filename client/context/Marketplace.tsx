@@ -480,10 +480,12 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
         try {
             setBtnState("Depositing funds...")
             const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
+            const ethProvider = new ethers.BrowserProvider((window as any).ethereum);
+            const signer = await ethProvider.getSigner();
             const provider =  await new BrowserProvider(connect).provider 
             const wallet = new Wallet(PRIVATE_KEY, provider);
             
-            const contract = new Contract(ADDRESS,ABI,wallet);
+            const contract = new Contract(ADDRESS,ABI,signer);
             const parsedAmount = ethers.parseEther(amount)
             const tx = await contract.depositFunds(jobId, {value : parsedAmount})
             setBtnState("Waiting...")

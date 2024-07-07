@@ -59,7 +59,7 @@ function SingleJobListing({id} : any){
                                 <div className="details ml20 ml0-xl">
                                     <p>{singleJob.description}</p>
                                     <h4 className="mb-3 text-thm">{singleJob.title}</h4>
-                                    <p className="list-inline-item mb-0">{singleJob.budget.toString()} BTC</p>
+                                    <p className="list-inline-item mb-0">{singleJob.budget.toString()} ETH</p>
                                     <p className="list-inline-item mb-0 bdrl1 pl15">{singleJob.completed ? 'Expired' : (
                                         'Ongoing'
                                         // 
