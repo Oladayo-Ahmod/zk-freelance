@@ -2,9 +2,8 @@ import { deployContract, getWallet, getProvider } from "./utils";
 import * as ethers from "ethers";
 
 export default async function () {
-  const ZKFreelance = await deployContract("Freelance",[]);
-  const ZKFreelanceAddress = await ZKFreelance.getAddress();
-  const paymaster = await deployContract("ZKFreelancePaymaster", [ZKFreelanceAddress]);
+   await deployContract("Freelance",[]);
+  const paymaster = await deployContract("ZKFreelanceGaslessPaymaster");
 
   const paymasterAddress = await paymaster.getAddress();
 

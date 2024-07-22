@@ -1,13 +1,13 @@
 "use client"
 
 import React, { createContext, useEffect, useState } from 'react';
-import { ADDRESS, ABI } from '../constants/index';
+import { ADDRESS, ABI, ZKFreelancePaymasterAddress } from '../constants/index';
 import { ethers } from 'ethers';
 import Router from 'next/router';
 import Swal from 'sweetalert2';
 import FreelancerProps from '../app/interfaces/freelancerProps';
 import {uploadJSONToIPFS,uploadFileToIPFS} from '../constants/pinata'
-import { Contract, BrowserProvider, Provider, Wallet } from "zksync-ethers";
+import { Contract,utils, BrowserProvider, Provider, Wallet } from "zksync-ethers";
 
 
 export const FREELANCER_CONTEXT = createContext<FreelancerProps | undefined>(
@@ -65,6 +65,11 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
         budget : undefined
     })
 
+     // paymaster parameters
+     const paymasterParams = utils.getPaymasterParams(ZKFreelancePaymasterAddress, {
+        type: "General",
+        innerInput: new Uint8Array(),
+      });
 
 
       // wallet connection
@@ -83,20 +88,48 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     const registerFreelancer : FreelancerProps["registerFreelancer"] = async function(){
         const {name,country,skills,gitDesc,gitTitle,starting_price} = freelancerForm
         
-        if(account){
+        if(account && connect){
             if(name && country && skills && profileImage && gigImage &&gitDesc && gitTitle && starting_price){
                 const price = ethers.parseEther(starting_price.toString())
                 const images = [profileImage.toString() ,gigImage.toString()]                
                 try {
 
                setBtnState("Registering...")
+                // paymaster parameters
+                const paymasterParams = utils.getPaymasterParams(ZKFreelancePaymasterAddress, {
+                    type: "General",
+                    innerInput: new Uint8Array(),
+                });
+               console.log('pay',paymasterParams)
 
-               const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
-               const provider =  await new BrowserProvider(connect).provider 
-               const wallet = new Wallet(PRIVATE_KEY, provider);
 
-               const contract = new Contract(ADDRESS,ABI,wallet);
-               const register = await contract.registerFreelancer(name,skills,country,gitTitle,gitDesc,images,price)
+               const provider =  new BrowserProvider(connect)
+               const zksyncProvider = new Provider("https://sepolia.era.zksync.dev")
+               const signer = await provider.getSigner()
+
+               const contract = new ethers.Contract(ADDRESS,ABI,signer);
+               console.log('contract',contract)
+
+               const gasLimit = await contract.registerFreelancer
+               .estimateGas(name,skills,country,gitTitle,gitDesc,images,price,{
+                customData: {
+                  gasPerPubdata: utils.DEFAULT_GAS_PER_PUBDATA_LIMIT,
+                  paymasterParams: paymasterParams,
+                },
+              });
+              console.log('gaslimit',gasLimit)
+
+              const register = await contract
+                .registerFreelancer(name,skills,country,gitTitle,gitDesc,images,price,{
+                maxPriorityFeePerGas: ethers.toBigInt(0),
+                maxFeePerGas: await zksyncProvider.getGasPrice(),
+                gasLimit,
+                customData: {
+                  gasPerPubdata: utils.DEFAULT_GAS_PER_PUBDATA_LIMIT,
+                  paymasterParams,
+                },
+              });
+
                setBtnState("Waiting...")
                await register.wait()
                setBtnState("Registered!")
