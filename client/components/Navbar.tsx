@@ -25,7 +25,7 @@ function Navbar(){
             freelancerDetails(account) // retrieve current freelancer details
             
         }
-    })
+    },[account])
     return (
         <>
              <header className="header-nav nav-homepage-style stricky main-menu"

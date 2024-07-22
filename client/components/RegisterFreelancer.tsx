@@ -174,9 +174,9 @@ function RegisterFreelancer(){
                         </div>
 
                         <div className="d-grid mb20">
-                        <a href={'/freelancer/'+currentFreelancerDetails?.freelancerAddress} style={{'display' : !currentFreelancerDetails?.registered ? 'none' : 'block'}}
+                        <a href="#" type='button' style={{'display' : !currentFreelancerDetails?.registered ? 'none' : 'block'}}
                              className="ud-btn btn-thm default-box-shadow2" 
-                             >View Profile<i
+                             >Registered<i
               className="fal fa-arrow-right-long"></i>
                         </a>
                         </div>

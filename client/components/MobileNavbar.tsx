@@ -24,7 +24,7 @@ function MobileNavbar(){
             freelancerDetails(account) // retrieve current freelancer details 
         }
         
-    })
+    },[account])
 
         // bootstrap
         useEffect(()=>{
