@@ -21,6 +21,8 @@ if(typeof window !=='undefined'){
     
 }
 
+
+
 export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({children,})=>{
 
     // states variables
@@ -95,20 +97,12 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
                 try {
 
                setBtnState("Registering...")
-                // paymaster parameters
-                const paymasterParams = utils.getPaymasterParams(ZKFreelancePaymasterAddress, {
-                    type: "General",
-                    innerInput: new Uint8Array(),
-                });
-               console.log('pay',paymasterParams)
-
 
                const provider =  new BrowserProvider(connect)
                const zksyncProvider = new Provider("https://sepolia.era.zksync.dev")
                const signer = await provider.getSigner()
 
                const contract = new ethers.Contract(ADDRESS,ABI,signer);
-               console.log('contract',contract)
 
                const gasLimit = await contract.registerFreelancer
                .estimateGas(name,skills,country,gitTitle,gitDesc,images,price,{
@@ -117,7 +111,6 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
                   paymasterParams: paymasterParams,
                 },
               });
-              console.log('gaslimit',gasLimit)
 
               const register = await contract
                 .registerFreelancer(name,skills,country,gitTitle,gitDesc,images,price,{
@@ -197,11 +190,9 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     // get freelancer details by address
     const freelancerDetails : FreelancerProps["freelancerDetails"] =async(account)=>{
         try {
-            const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
-            const provider =  await new BrowserProvider(connect).provider 
-            const wallet = new Wallet(PRIVATE_KEY, provider);
-            
-            const contract = new Contract(ADDRESS,ABI,wallet);
+            const provider =  new BrowserProvider(connect)
+            const signer = await provider.getSigner()
+            const contract = new ethers.Contract(ADDRESS,ABI,signer);
             const details = await contract.freelancers(account)
             const balance = ethers.formatEther(details.balance.toString())
             const date  = new Date(details.registration_date.toString() * 1000)
@@ -264,11 +255,9 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
     const employerDetails : FreelancerProps["employerDetails"] =async(account)=>{
         try {
             
-            const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
-            const provider =  await new BrowserProvider(connect).provider 
-            const wallet = new Wallet(PRIVATE_KEY, provider);
-            
-            const contract = new Contract(ADDRESS,ABI,wallet);
+            const provider =  new BrowserProvider(connect)
+            const signer = await provider.getSigner()
+            const contract = new ethers.Contract(ADDRESS,ABI,signer);
             const details = await contract.employers(account)
             const balance = ethers.formatEther(details.balance.toString())
             setEmployerBal(balance.toString())
@@ -285,13 +274,33 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
         if(name && country && industry && profileImage){
             const image = profileImage.toString()
              try {
-             setBtnState("Registering...")
-             const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
-             const provider =  await new BrowserProvider(connect).provider 
-             const wallet = new Wallet(PRIVATE_KEY, provider);
-             
-             const contract = new Contract(ADDRESS,ABI,wallet);
-             const register = await contract.registerEmployer(name,industry,country,image)
+                setBtnState("Registering...")
+
+                const provider =  new BrowserProvider(connect)
+                const zksyncProvider = new Provider("https://sepolia.era.zksync.dev")
+                const signer = await provider.getSigner()
+ 
+                const contract = new ethers.Contract(ADDRESS,ABI,signer);
+ 
+                const gasLimit = await contract.registerEmployer
+                .estimateGas(name,industry,country,image,{
+                 customData: {
+                   gasPerPubdata: utils.DEFAULT_GAS_PER_PUBDATA_LIMIT,
+                   paymasterParams: paymasterParams,
+                 },
+               });
+ 
+               const register = await contract
+                 .registerEmployer(name,industry,country,image,{
+                 maxPriorityFeePerGas: ethers.toBigInt(0),
+                 maxFeePerGas: await zksyncProvider.getGasPrice(),
+                 gasLimit,
+                 customData: {
+                   gasPerPubdata: utils.DEFAULT_GAS_PER_PUBDATA_LIMIT,
+                   paymasterParams,
+                 },
+               });
+ 
              setBtnState("Waiting...")
              await register.wait()
              setBtnState("Registered!")
@@ -341,14 +350,32 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
             try {
                 setBtnState("Creating job...")
                 const parsedBudget = ethers.parseEther(budget.toString())
-                const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
-                const provider =  await new BrowserProvider(connect).provider 
-                const wallet = new Wallet(PRIVATE_KEY, provider);
-                
-                const contract = new Contract(ADDRESS,ABI,wallet);
-                const tx  = await contract.createJob(title,description,parsedBudget)
+                const provider =  new BrowserProvider(connect)
+                const zksyncProvider = new Provider("https://sepolia.era.zksync.dev")
+                const signer = await provider.getSigner()
+ 
+                const contract = new ethers.Contract(ADDRESS,ABI,signer);
+ 
+                const gasLimit = await contract.createJob
+                .estimateGas(title,description,parsedBudget,{
+                 customData: {
+                   gasPerPubdata: utils.DEFAULT_GAS_PER_PUBDATA_LIMIT,
+                   paymasterParams: paymasterParams,
+                 },
+               });
+ 
+               const create = await contract
+                 .createJob(title,description,parsedBudget,{
+                 maxPriorityFeePerGas: ethers.toBigInt(0),
+                 maxFeePerGas: await zksyncProvider.getGasPrice(),
+                 gasLimit,
+                 customData: {
+                   gasPerPubdata: utils.DEFAULT_GAS_PER_PUBDATA_LIMIT,
+                   paymasterParams,
+                 },
+               });
                 setBtnState("Waiting...")
-                await tx.wait()
+                await create.wait()
                 setBtnState("Created!")
 
                 const modalElement = modalRef.current ? modalRef.current : ''
@@ -399,13 +426,31 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
      const applyJob : FreelancerProps["applyJob"]=async (jobId)=>{
         try {
           
-            const PRIVATE_KEY = process.env.NEXT_PUBLIC_PRIVATE_KEY?? '0x'
-            const provider =  await new BrowserProvider(connect).provider 
-            const wallet = new Wallet(PRIVATE_KEY, provider);
-            
-            const contract = new Contract(ADDRESS,ABI,wallet);
-            const tx = await contract.applyForJob(jobId)
-            await tx.wait()
+            const provider =  new BrowserProvider(connect)
+            const zksyncProvider = new Provider("https://sepolia.era.zksync.dev")
+            const signer = await provider.getSigner()
+
+            const contract = new ethers.Contract(ADDRESS,ABI,signer);
+
+            const gasLimit = await contract.applyForJob
+            .estimateGas(jobId,{
+             customData: {
+               gasPerPubdata: utils.DEFAULT_GAS_PER_PUBDATA_LIMIT,
+               paymasterParams: paymasterParams,
+             },
+           });
+
+           const apply = await contract
+             .applyForJob(jobId,{
+             maxPriorityFeePerGas: ethers.toBigInt(0),
+             maxFeePerGas: await zksyncProvider.getGasPrice(),
+             gasLimit,
+             customData: {
+               gasPerPubdata: utils.DEFAULT_GAS_PER_PUBDATA_LIMIT,
+               paymasterParams,
+             },
+           });;
+            await apply.wait()
 
             Swal.fire({
                 position: 'top-end',
