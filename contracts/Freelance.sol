@@ -107,12 +107,8 @@ contract Freelance is Employ {
     /// @param freelancerAddress , @param comment , @param rating
     function submitReview(address freelancerAddress, string memory comment, uint8 rating)
      public onlyEmployer(msg.sender) {
-        Job storage job = jobs[jobId];
-        require(msg.sender == job.employer);
         require(rating > 0 && rating <= 5, "Invalid rating");
         require(freelancers[freelancerAddress].registered, "Freelancer not registered");
-        require(job.completed == true, "JNC"); // Job is not completed by freelancer
-
         
         freelancerReviews[freelancerAddress].push(Review({
             reviewer: msg.sender,
