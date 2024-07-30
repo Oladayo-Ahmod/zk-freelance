@@ -3,9 +3,19 @@ pragma solidity ^0.8.0;
 import "./Employ.sol";
 
 contract Freelance is Employ { 
-   
 
-     /// @notice retrieves freelancer by address
+    struct Review {
+        address reviewer;
+        string comment;
+        uint8 rating; // Rating out of 5
+        uint256 timestamp;
+    }
+
+    mapping(address => Review[]) private freelancerReviews;
+
+    event ReviewSubmitted(address indexed freelancer, address indexed reviewer, uint8 rating, string comment, uint256 timestamp);
+
+    /// @notice retrieves freelancer by address
     /// @param _freelancer, address
     /// @return props
     function getFreelancerByAddress(address _freelancer) external view returns(Freelancer memory props){
@@ -24,14 +34,13 @@ contract Freelance is Employ {
         freelancers[msg.sender] = Freelancer(msg.sender, _name, _skills, 0,_country, 
         _gigTitle,_gigDesc,_images,0,true,block.timestamp,_starting_price);
         
-         // Add the freelancer address to the array
+        // Add the freelancer address to the array
         allFreelancerAddresses.push(msg.sender);
 
         emit FreelancerRegistered(msg.sender, _images, _starting_price);
-        
     }
 
-         /// @notice return all freelancers
+    /// @notice return all freelancers
     function getAllFreelancers() public view returns (Freelancer[] memory) {
         Freelancer[] memory allFreelancers = new Freelancer[](totalFreelancers);
 
@@ -42,9 +51,8 @@ contract Freelance is Employ {
         return allFreelancers;
     }
 
-    
-        /// @notice process employer funds deposit for a specific job
-        /// @param jobId , job id
+    /// @notice process employer funds deposit for a specific job
+    /// @param jobId , job id
     function depositFunds(uint jobId) public payable {
         require(jobId <= totalJobs && jobId > 0, "JDE."); // job does not exist
         Job storage job = jobs[jobId];
@@ -58,13 +66,13 @@ contract Freelance is Employ {
         emit FundsDeposited(jobId, msg.sender, msg.value);
     }
 
-        /// @notice release escrow fund after successful completion of the job
-        /// @param jobId , @param freelancerAddress
+    /// @notice release escrow fund after successful completion of the job
+    /// @param jobId , @param freelancerAddress
     function releaseEscrow(uint jobId, address freelancerAddress) public onlyEmployer(msg.sender){
         require(jobId <= totalJobs && jobId > 0, "JDE."); // job does not exist
         Job storage job = jobs[jobId];
         require(msg.sender == job.employer);
-        require(job.completed = true, "JNC"); // Job is not completed by freelancer
+        require(job.completed == true, "JNC"); // Job is not completed by freelancer
 
         uint escrowAmount = escrowFunds[msg.sender][jobId];
 
@@ -75,12 +83,11 @@ contract Freelance is Employ {
         Freelancer storage freelancer = freelancers[freelancerAddress];
         freelancer.balance += escrowAmount;
         // update employer balance
-         Employer storage employer = employers[msg.sender];
-         employer.balance -= escrowAmount;
+        Employer storage employer = employers[msg.sender];
+        employer.balance -= escrowAmount;
          
         emit FundsReleased(jobId, freelancerAddress, escrowAmount);
     }
-
 
     /// @notice process funds withdrawal to the freelancer after successful completion of a job
     function withdrawEarnings() public onlyFreelancer(msg.sender) {
@@ -94,5 +101,34 @@ contract Freelance is Employ {
         require(success, "TF"); // Transfer failed
 
         emit WithdrawFund(msg.sender, withdrawAmount);
+    }
+
+    /// @notice submit a review for a freelancer
+    /// @param freelancerAddress , @param comment , @param rating
+    function submitReview(address freelancerAddress, string memory comment, uint8 rating)
+     public onlyEmployer(msg.sender) {
+        Job storage job = jobs[jobId];
+        require(msg.sender == job.employer);
+        require(rating > 0 && rating <= 5, "Invalid rating");
+        require(freelancers[freelancerAddress].registered, "Freelancer not registered");
+        require(job.completed == true, "JNC"); // Job is not completed by freelancer
+
+        
+        freelancerReviews[freelancerAddress].push(Review({
+            reviewer: msg.sender,
+            comment: comment,
+            rating: rating,
+            timestamp: block.timestamp
+        }));
+        
+        emit ReviewSubmitted(freelancerAddress, msg.sender, rating, comment, block.timestamp);
+    }
+
+
+    /// @notice get all reviews for a freelancer
+    /// @param freelancerAddress, address of the freelancer
+    /// @return reviews
+    function getFreelancerReviews(address freelancerAddress) public view returns(Review[] memory reviews) {
+        reviews = freelancerReviews[freelancerAddress];
     }
 }

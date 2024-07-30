@@ -16,10 +16,10 @@ export default function Home() {
         <MobileNavbar />
         <div className="body_content">
           <HomeBanner />
-          <TalentCategory />
+          {/* <TalentCategory /> */}
           <PopularService />
-          <HowItWorks />
-          <CTABanner />
+          {/* <HowItWorks /> */}
+          {/* <CTABanner /> */}
           <Footer />
         </div>
       </main>

@@ -96,6 +96,7 @@ describe('Freelance ', ()=>{
         assert.equal(updatedBalance.toString(),ethers.parseEther(fund).toString())
     });
 
+
      // withrawal of earnings by freelancer
   it("Should withdraw earnings and not allow withdrawal on empty balance", async function () {
     const withdraw = await (dfreelancer.connect(freelancer) as Contract)

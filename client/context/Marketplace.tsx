@@ -279,7 +279,7 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
                 const provider =  new BrowserProvider(connect)
                 const zksyncProvider = new Provider("https://sepolia.era.zksync.dev")
                 const signer = await provider.getSigner()
- 
+   
                 const contract = new ethers.Contract(ADDRESS,ABI,signer);
  
                 const gasLimit = await contract.registerEmployer
