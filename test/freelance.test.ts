@@ -114,7 +114,7 @@ describe('Freelance ', ()=>{
     // submit review for freelancer
     it("Should submit a review for a freelancer", async function () {
         const reviewComment = "Great job!";
-        const reviewRating = 5;
+        const reviewRating = '5';
 
         await (dfreelancer.connect(employer) as Contract)
         .submitReview(freelancer.address, reviewComment, reviewRating);
@@ -123,7 +123,7 @@ describe('Freelance ', ()=>{
         expect(reviews.length).to.equal(1);
         expect(reviews[0].reviewer).to.equal(employer.address);
         expect(reviews[0].comment).to.equal(reviewComment);
-        expect(reviews[0].rating).to.equal(reviewRating);
+        expect(reviews[0].rating.toString()).to.equal(reviewRating);
     });
 
     // get reviews for freelancer
