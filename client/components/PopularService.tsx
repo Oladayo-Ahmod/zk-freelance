@@ -119,7 +119,9 @@ function PopularService(){
                                     </div>
                                     <div className="list-content">
                                         {/* <p className="list-text body-color fz14 mb-1">Web & Logo Design</p> */}
-                                        <h5 className="list-title"><Link href={'/freelancer/'+freelancer.freelancerAddress}>{freelancer.gigTitle}</Link></h5>
+                                        <h5 className="list-title">
+                                            <Link href={'/freelancer/'+freelancer.freelancerAddress}>{freelancer.gigTitle}</Link>
+                                            </h5>
                                         <div className="review-meta d-flex align-items-center">
                                             <i className="fas fa-star fz10 review-color me-2"></i>
                                             {/* <p className="mb-0 body-color fz14"><span className="dark-color me-2">4.82</span>94 reviews</p> */}

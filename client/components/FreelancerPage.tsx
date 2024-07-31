@@ -109,6 +109,29 @@ function FreelancerPage({address} : any){
                                 <h4>Description</h4>
                                 <p className="text mb30"> {applicantDetails.gitDescription}</p>
                             </div>
+
+                            <div className="reviews-section">
+                            <h4>Reviews</h4>
+                            {reviews.map((review, index) => (
+                                <div className="review" key={index}>
+                                    <div className="review-header d-flex align-items-center mb-2">
+                                        <div className="reviewer-info">
+                                            <h5 className="reviewer-name">{review.reviewer}</h5>
+                                            <div className="review-rating">
+                                                {[...Array(5)].map((star, i) => (
+                                                    <FaStar 
+                                                        key={i}
+                                                        color={i < review.rating ? "#ffc107" : "#e4e5e9"}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p className="review-comment">{review.comment}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                         </div>
                         <div className="col-lg-4">
                             <div className="blog-sidebar ms-lg-auto">

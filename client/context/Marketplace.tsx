@@ -748,7 +748,7 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
         }
      }
 
-        //  
+        // review submission by employer
       const submitReview : FreelancerProps["submitReview"]= async(modalRef : React.RefObject<HTMLElement>)=>{
         try {
             setBtnState("Submitting review...")
@@ -800,6 +800,7 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
             console.log(error)
         }
       }
+
 
     //  complete job by employer
      const completeJob : FreelancerProps["completeJob"] = async(jobId, address)=>{

@@ -17,7 +17,8 @@ contract Jobs{
         uint256 budget;
         bool completed;
         address[] applicants;
-        address hiredFreelancer;        
+        address hiredFreelancer;     
+        // bool reviewed;   
         
     }
 
