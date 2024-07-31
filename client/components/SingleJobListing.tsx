@@ -6,10 +6,13 @@ import FreelancerProps from "@/app/interfaces/freelancerProps"
 
 function SingleJobListing({id} : any){
 
+    const modalRef = useRef(null) // boostrap modal  
+
     // import context apis
     const {
-        account,currentEmployerDetails,employerDetails,singleJob,completeJob,completeBtnState,
-        jobEscrow,retrieveEscrow,retrieveJob,depositFunds,releaseEscrow,btnState,escrowBtnState
+        account,currentEmployerDetails,employerDetails,singleJob,completeJob,completeBtnState,reviewForm,
+        submitReview,
+        jobEscrow,retrieveEscrow,retrieveJob,depositFunds,releaseEscrow,btnState,escrowBtnState,setReviewForm,
     } = useContext(FREELANCER_CONTEXT) as FreelancerProps
 
     useEffect(()=>{        
@@ -101,7 +104,14 @@ function SingleJobListing({id} : any){
                                      {/* escrow status */}
                                      {currentEmployerDetails?.registered && 
                                      singleJob?.completed == true && Number(jobEscrow) <= 0 ? 
-                                     (<p className="list-inline-item mb-0 bdrl1 pl15">Escrow released</p>) : ''}
+                                     (
+                                        <>
+                                          <p className="list-inline-item mb-0 bdrl1 pl15">Escrow released</p>
+
+                                          <button data-bs-toggle="modal" data-bs-target="#reviewModal"
+                                          className='btn btn-primary btn-sm text-white'>Give a Review</button>
+                                        </>
+                                     ) : ''}
                                 </div>
                             </div>
                             </div>
@@ -116,7 +126,42 @@ function SingleJobListing({id} : any){
                     </div>
                 </div>
             </div>
+
+            {/* Review Modal  */}
+            <div className="modal fade"  ref={modalRef} id="reviewModal" tabIndex={1} role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                            <div className="modal-header">
+                                    <h5 className="modal-title" id="modalTitleId">Review</h5>
+                                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                        <div className="modal-body">
+                            <div className="container-fluid">
+                                <div className="mb-3">
+                                    <label  className="form-label">Comment</label>
+                                    <input required type="text" className="form-control" placeholder="comment" 
+                                    aria-describedby="helpId" onChange={(e)=>setReviewForm({...reviewForm, comment : e.target.value})}  />                    
+                                </div>
+
+                                <div className="mb-3">
+                                    <label  className="form-label">Rating</label>
+                                    <input type="number" className="form-control" placeholder="0 - 5" min="0" max="5"
+                                    aria-describedby="helpId" onChange={(e)=>setReviewForm({...reviewForm, rating : Number(e.target.value)})}  />                      
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary text-white" data-bs-dismiss="modal">Close</button>
+                            <button type="button" onClick={()=>submitReview(modalRef)} className="btn btn-primary text-white">{btnState? btnState : "Create"}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </section>
+
+        
     )
 }
 

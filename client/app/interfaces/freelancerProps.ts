@@ -61,6 +61,16 @@ interface FreelancerProps{
         budget : number | undefined
     }>>
 
+    reviewForm : {
+        comment : string | undefined,
+        rating : number | undefined
+    }
+
+    setReviewForm : React.Dispatch<React.SetStateAction<{
+        comment : string | undefined,
+        rating : number | undefined
+    }>>
+
     createJob : (modalRef : React.RefObject<HTMLElement>)=> void
     applyJob : (jobId : number)=> void
     hireFreelancer : (jobId : number, address: string)=> void
@@ -80,6 +90,7 @@ interface FreelancerProps{
     retrieveUncompletedJobsByEmployer : (address : string)=> void
     getFreelancerHiredJobs : (address : string) => void
     retrieveEscrow : (jobId : number)=> void
+    submitReview :(modalRef : React.RefObject<HTMLElement>)=> void
     toggleNav : ()=> void
 
 }

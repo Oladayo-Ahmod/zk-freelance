@@ -147,9 +147,6 @@ function Navbar(){
                 </div>
             </nav>
         </header>
-
-         {/* Job Modal  */}
-       
        
         
          {/* Modal  */}

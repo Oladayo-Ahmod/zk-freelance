@@ -67,6 +67,11 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
         budget : undefined
     })
 
+    const [reviewForm, setReviewForm] = useState<FreelancerProps["reviewForm"]>({
+        comment : '',
+        rating : undefined
+    })
+
      // paymaster parameters
      const paymasterParams = utils.getPaymasterParams(ZKFreelancePaymasterAddress, {
         type: "General",
@@ -664,7 +669,7 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
         }
      }
 
-      //  release escrow by employer
+        //  release escrow by employer
       const releaseEscrow : FreelancerProps["releaseEscrow"] = async(jobId,address)=>{
         try {
             setEscrowBtnState("Releasing escrow...")
@@ -741,6 +746,58 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
             
         }
      }
+
+        //  
+      const submitReview : FreelancerProps["submitReview"]= async(modalRef : React.RefObject<HTMLElement>)=>{
+        try {
+            setBtnState("Submitting review...")
+            const {comment,rating} = reviewForm
+            const provider =  new BrowserProvider(connect)
+            const zksyncProvider = new Provider("https://sepolia.era.zksync.dev")
+            const signer = await provider.getSigner()
+
+            const contract = new ethers.Contract(ADDRESS,ABI,signer);
+
+            const gasLimit = await contract.submitReview
+            .estimateGas(address,comment,rating,{
+             customData: {
+               gasPerPubdata: utils.DEFAULT_GAS_PER_PUBDATA_LIMIT,
+               paymasterParams: paymasterParams,
+             },
+           });
+
+            const review = await contract
+             .submitReview(address,comment,rating,{
+             maxPriorityFeePerGas: ethers.toBigInt(0),
+             maxFeePerGas: await zksyncProvider.getGasPrice(),
+             gasLimit,
+             customData: {
+               gasPerPubdata: utils.DEFAULT_GAS_PER_PUBDATA_LIMIT,
+               paymasterParams,
+             },
+           });
+
+            setBtnState("Waiting...")
+            await review.wait()
+            setBtnState("Review submitted!")
+
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                text: `You have successfully submitted a review!`,
+                showConfirmButton: true,
+                timer: 4000
+            })
+
+            setTimeout(() => {
+                setBtnState("")
+            }, 1000);
+
+        }
+        catch(error){
+            console.log(error)
+        }
+      }
 
     //  complete job by employer
      const completeJob : FreelancerProps["completeJob"] = async(jobId, address)=>{
@@ -1123,6 +1180,8 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
             setEmployerForm,
             registerEmployer,
             jobCreationForm,
+            reviewForm,
+            setReviewForm,
             setJobCreationForm,
             createJob,
             applyJob,
@@ -1157,7 +1216,8 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
             completeBtnState,
             testjobs,
             applicantDetails,
-            applicantDetailsFunc
+            applicantDetailsFunc,
+            submitReview
         }}
         >
             {children}
