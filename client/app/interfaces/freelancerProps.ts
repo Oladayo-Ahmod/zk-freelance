@@ -63,12 +63,15 @@ interface FreelancerProps{
 
     reviewForm : {
         comment : string | undefined,
-        rating : number | undefined
+        rating : number | undefined,
+        address : string | undefined
     }
 
     setReviewForm : React.Dispatch<React.SetStateAction<{
         comment : string | undefined,
         rating : number | undefined
+        address : string | undefined
+
     }>>
 
     createJob : (modalRef : React.RefObject<HTMLElement>)=> void

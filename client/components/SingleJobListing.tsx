@@ -146,14 +146,19 @@ function SingleJobListing({id} : any){
                                 <div className="mb-3">
                                     <label  className="form-label">Rating</label>
                                     <input type="number" className="form-control" placeholder="0 - 5" min="0" max="5"
-                                    aria-describedby="helpId" onChange={(e)=>setReviewForm({...reviewForm, rating : Number(e.target.value)})}  />                      
+                                    aria-describedby="helpId" 
+                                    onChange={(e)=>
+                                    setReviewForm(
+                                        {...reviewForm, rating : Number(e.target.value), address : singleJob?.hiredFreelancer}
+                                    )}  />                      
                                 </div>
                             </div>
                         </div>
 
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary text-white" data-bs-dismiss="modal">Close</button>
-                            <button type="button" onClick={()=>submitReview(modalRef)} className="btn btn-primary text-white">{btnState? btnState : "Create"}</button>
+                            <button type="button" onClick={()=>submitReview(modalRef)} 
+                            className="btn btn-primary text-white">{btnState? btnState : "Submit Review"}</button>
                         </div>
                     </div>
                 </div>

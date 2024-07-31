@@ -69,7 +69,8 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
 
     const [reviewForm, setReviewForm] = useState<FreelancerProps["reviewForm"]>({
         comment : '',
-        rating : undefined
+        rating : undefined,
+        address : ''
     })
 
      // paymaster parameters
@@ -751,7 +752,8 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
       const submitReview : FreelancerProps["submitReview"]= async(modalRef : React.RefObject<HTMLElement>)=>{
         try {
             setBtnState("Submitting review...")
-            const {comment,rating} = reviewForm
+            const {comment,rating,address} = reviewForm
+            console.log(reviewForm)
             const provider =  new BrowserProvider(connect)
             const zksyncProvider = new Provider("https://sepolia.era.zksync.dev")
             const signer = await provider.getSigner()
