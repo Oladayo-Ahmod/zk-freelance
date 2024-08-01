@@ -3,6 +3,7 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { FREELANCER_CONTEXT} from '../context/Marketplace'
 import FreelancerProps from "@/app/interfaces/freelancerProps"
+import Link from 'next/link'
 
 function SingleJobListing({id} : any){
 
@@ -86,9 +87,13 @@ function SingleJobListing({id} : any){
                                      singleJob?.completed == false && Number(jobEscrow) > 0
                                      && !singleJob.hiredFreelancer.includes('0x000000000000')
                                       ? (
-                                        <button className="btn-warning btn text-white" type='button'
+                                        <>
+                                         <Link className="d-flex mt-2" href={'/freelancer/'+singleJob.hiredFreelancer}>View Freelancer</Link>
+                                         <button className="btn-warning btn text-white" type='button'
                                         onClick={()=>completeJob(singleJob.id.toString(),singleJob.hiredFreelancer)}>{completeBtnState? completeBtnState : 'Mark as completed'}</button>
-                                    ): ''
+       
+                                        </>
+                                        ): ''
                                 }
                                     {/* release funds escrow */}
                                     {currentEmployerDetails?.registered &&

@@ -216,7 +216,7 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
                 jobsCompleted : details.jobsCompleted,
                 registered : details.registered,
                 registration_date : month + ',' + year,
-                starting_price : ethers.formatEther(details.starting_price.toString())
+                starting_price : ethers.formatEther(details.starting_price.toString()),
 
             }
             setCurrentFreelancerDetails(freelancer)
@@ -232,6 +232,12 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
             allFreelancers()
             if (freelancers) {
                 const details = await freelancers.filter((freelancer : any) => Number(freelancer.freelancerAddress) === Number(account));
+
+                const provider =  new BrowserProvider(connect)
+                const signer = await provider.getSigner()
+                const contract = new ethers.Contract(ADDRESS,ABI,signer);
+                const reviews = await contract.getFreelancerReviews(account)
+
                 const date  = new Date(details[0].registration_date.toString() * 1000)
                 const year = date.getFullYear()  
                 const month = date.toLocaleString('default', {month : 'long'})
@@ -247,7 +253,8 @@ export const FreelancerProvider:React.FC<{children : React.ReactNode}>=({childre
                     jobsCompleted : details[0].jobsCompleted,
                     registered : details[0].registered,
                     registration_date : month + ',' + year,
-                    starting_price : ethers.formatEther(details[0].starting_price.toString())
+                    starting_price : ethers.formatEther(details[0].starting_price.toString()),
+                    reviews : reviews.map((review :any)=>review)
                 }
                 setApplicantDetails(freelancer)
             }

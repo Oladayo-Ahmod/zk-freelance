@@ -5,6 +5,7 @@ import { FREELANCER_CONTEXT} from '../context/Marketplace'
 import FreelancerProps from "@/app/interfaces/freelancerProps"
 import Link from 'next/link'
 import Image from 'next/image'
+import { FaStar, FaUser } from 'react-icons/fa'; // Using react-icons for star ratings
 
 function FreelancerPage({address} : any){
     // import context apis
@@ -13,17 +14,17 @@ function FreelancerPage({address} : any){
         ,applicantDetailsFunc,applicantDetails,employerDetails,currentEmployerDetails,btnState
     } = useContext(FREELANCER_CONTEXT) as FreelancerProps
 
-    useEffect(()=>{
-        
+    useEffect(() => {
         if (account) {
-            employerDetails(account) // retrieve current employer details 
-            retrieveUncompletedJobsByEmployer(account) // retrieve uncompleted jobs by employer
-            if(account !== address.address	){
-                applicantDetailsFunc(address.address) 
+            employerDetails(account); // retrieve current employer details 
+            retrieveUncompletedJobsByEmployer(account); // retrieve uncompleted jobs by employer
+            if (account !== address.address) {
+                applicantDetailsFunc(address.address); 
+                // console.log(applicantDetails)
             }
-            
         }
-    },[account])
+    }, [ address.address, employerDetails, retrieveUncompletedJobsByEmployer, applicantDetailsFunc]);
+
     
     return(
         <>
@@ -66,7 +67,7 @@ function FreelancerPage({address} : any){
                                         </a>
                                     <div className="ml20 ml0-xs">
                                         <h5 className="title mb-1">{applicantDetails.name}</h5>
-                                        <p className="mb-0 dark-color fz15 fw500 list-inline-item mb5-sm"><i className="fas fa-star vam fz10 review-color me-2"></i> 4.82 94 reviews</p>
+                                        <p className="mb-0 dark-color fz15 fw500 list-inline-item mb5-sm"><i className="fas fa-star vam fz10 review-color me-2"></i> ({applicantDetails.reviews.length}) reviews</p>
                                         <p className="mb-0 dark-color fz15 fw500 list-inline-item ml15 mb5-sm ml0-xs">
                                              {applicantDetails.country}</p>
                                         <p className="mb-0 dark-color fz15 fw500 list-inline-item ml15 mb5-sm ml0-xs">
@@ -112,14 +113,16 @@ function FreelancerPage({address} : any){
 
                             <div className="reviews-section">
                             <h4>Reviews</h4>
-                            {reviews.map((review, index) => (
+                            {applicantDetails.reviews.map((review, index) => (
                                 <div className="review" key={index}>
                                     <div className="review-header d-flex align-items-center mb-2">
                                         <div className="reviewer-info">
-                                            <h5 className="reviewer-name">{review.reviewer}</h5>
+                                            <p className="reviewer-name">
+                                                <FaUser className="mr-2" /> {review.reviewer}
+                                            </p>
                                             <div className="review-rating">
                                                 {[...Array(5)].map((star, i) => (
-                                                    <FaStar 
+                                                    <FaStar                            
                                                         key={i}
                                                         color={i < review.rating ? "#ffc107" : "#e4e5e9"}
                                                     />
@@ -131,7 +134,7 @@ function FreelancerPage({address} : any){
                                 </div>
                             ))}
                         </div>
-                    </div>
+                    {/* </div> */}
                         </div>
                         <div className="col-lg-4">
                             <div className="blog-sidebar ms-lg-auto">
