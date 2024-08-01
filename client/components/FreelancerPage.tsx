@@ -113,7 +113,7 @@ function FreelancerPage({address} : any){
 
                             <div className="reviews-section">
                             <h4>Reviews</h4>
-                            {applicantDetails.reviews.map((review, index) => (
+                            {applicantDetails.reviews.map((review:any, index:any) => (
                                 <div className="review" key={index}>
                                     <div className="review-header d-flex align-items-center mb-2">
                                         <div className="reviewer-info">
